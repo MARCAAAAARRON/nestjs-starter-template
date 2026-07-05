@@ -1,98 +1,271 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Starter Template
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A minimal NestJS starter with global validation enabled, ready to scaffold new resources immediately.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## What's Included
+- NestJS base project (Nest CLI default)
+- `class-validator` + `class-transformer` installed and wired up
+- Global `ValidationPipe` enabled in `main.ts`
+- Clean `app.module.ts` with no leftover example resources
+- `.env.example` showing required environment variables
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Setup
 
-## Project setup
+1. Clone this repo
+2. Copy `.env.example` to `.env`
+   ```bash
+   cp .env.example .env
+   ```
+3. Fill in real values in `.env`
+4. Install dependencies
+   ```bash
+   pnpm install
+   ```
+5. Start the dev server
+   ```bash
+   npm run start:dev
+   ```
+6. Visit `http://localhost:3000` — you should see "Hello World!"
 
-```bash
-$ npm install
+---
+
+## The Core Pattern: How a Request Flows Through the App
+
+Every resource you build in this project follows the same shape. Understanding this flow matters more than memorizing syntax.
+
+```
+Client sends a request (e.g. POST /products)
+        │
+        ▼
+┌───────────────────┐
+│     Controller      │  "Which route was hit? What HTTP method?
+│ (products.controller.ts)   What data came in the body/params?"
+└───────────────────┘
+        │
+        │  passes incoming data through the DTO first
+        ▼
+┌───────────────────┐
+│        DTO           │  "Is this data allowed in? Does it match
+│  (dto/create-x.dto.ts)     the required shape and validation rules?"
+└───────────────────┘
+        │
+        │  if valid, Controller calls the Service
+        ▼
+┌───────────────────┐
+│      Service          │  "Here's the actual logic — create,
+│ (products.service.ts)      read, update, delete."
+└───────────────────┘
+        │
+        │  reads/writes data shaped like...
+        ▼
+┌───────────────────┐
+│       Entity           │  "This is what a Product actually
+│ (entities/product.entity.ts) looks like — its fields and types."
+└───────────────────┘
+        │
+        ▼
+Response sent back to the client
 ```
 
-## Compile and run the project
+Everything is tied together by the **Module**, which doesn't contain any logic itself — it just declares "this Controller and this Service belong together":
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+┌─────────────────────────┐
+│      ProductsModule        │
+│                             │
+│  controllers: [ProductsController]
+│  providers:   [ProductsService]
+└─────────────────────────┘
 ```
 
-## Run tests
+And `AppModule` (the root module) just imports each feature module:
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+AppModule
+   └── imports: [ProductsModule, UsersModule, ...]
 ```
 
-## Deployment
+### The Five Pieces, in Plain Terms
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Piece | Question it answers | Example file |
+|---|---|---|
+| **Entity** | "What does this data look like?" | `entities/product.entity.ts` |
+| **DTO** | "What's allowed to come in from the client?" | `dto/create-product.dto.ts` |
+| **Controller** | "Which URL/method triggers what?" | `products.controller.ts` |
+| **Service** | "What's the actual logic?" | `products.service.ts` |
+| **Module** | "How do these pieces get bundled together?" | `products.module.ts` |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+**Rule of thumb:** the Controller never contains logic (it just calls the Service), the Service never touches HTTP directly (it just does work and returns data), and a Module never contains logic at all (it's just a manifest).
+
+---
+
+## Adding a New Resource
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npx nest generate resource <name>
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+This scaffolds all five pieces above automatically. Then fill in, in this order:
 
-## Resources
+1. **Entity** (`entities/<name>.entity.ts`) — define the fields and their types
+2. **DTO** (`dto/create-<name>.dto.ts`) — add `class-validator` decorators for each field (`@IsString()`, `@IsNumber()`, `@IsPositive()`, `@IsIn([...])`, etc.)
+3. **Service** (`<name>.service.ts`) — implement `create`, `findAll`, `findOne`, `update`, `remove`
+4. **Confirm** `<name>.module.ts` is auto-imported into `app.module.ts` (the CLI usually does this for you — verify it)
+5. **Test** every route with a valid request and at least one intentionally invalid request, to confirm your DTO validation actually rejects bad data
 
-Check out a few resources that may come in handy when working with NestJS:
+### A Note on Fields the Client Shouldn't Control
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Some fields (like a `status` or `inStock` flag defaulting to a fixed value) should **not** appear in the `Create` DTO — they belong hardcoded in the Service instead, so a client can never set them directly on creation.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Full Worked Example: Entity + Service
 
-## Stay in touch
+This is a complete, working reference for a `Product` resource — the same shape every future resource in this template will follow. Use this as the template to copy from when building something new, rather than starting from a blank file.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Entity — `entities/product.entity.ts`
 
-## License
+The Entity just describes the *shape* of the data. No logic lives here — it's a plain description of what fields exist and their types.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```typescript
+export class Product {
+  id!: number;
+  name!: string;
+  price!: number;
+  category!: string;
+  inStock!: boolean;
+}
+```
+
+> Note the `!` after each property name. TypeScript's strict mode normally requires properties to be initialized immediately, but these values get assigned later (by the Service, or by decorators in a real database Entity) — the `!` tells TypeScript "trust me, this will be set before it's used."
+
+### DTO — `dto/create-product.dto.ts`
+
+The DTO describes what's allowed to come **in** from the client. Notice `inStock` is deliberately **not** here — the client never gets to set it directly.
+
+```typescript
+import { IsString, IsNotEmpty, IsNumber, IsPositive, IsIn } from 'class-validator';
+
+export class CreateProductDto {
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
+
+  @IsNumber()
+  @IsPositive()
+  price!: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsIn(['electronics', 'clothing', 'food', 'other'])
+  category!: string;
+}
+```
+
+### Service — `products.service.ts`
+
+The Service is where the real logic lives — every CRUD operation, fully implemented. This is the piece worth studying most closely, since it's where the Entity and DTO actually get used together.
+
+```typescript
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
+
+@Injectable()
+export class ProductsService {
+  // In-memory storage for now — this array is what a real database
+  // table will eventually replace. Everything else stays the same shape.
+  private products: Product[] = [];
+  private nextId = 1;
+
+  create(dto: CreateProductDto): Product {
+    const product: Product = {
+      id: this.nextId++,       // server-generated, client never sends this
+      name: dto.name,          // comes straight from the validated DTO
+      price: dto.price,
+      category: dto.category,
+      inStock: true,           // hardcoded default — NOT from the client
+    };
+    this.products.push(product);
+    return product;             // always return what was created
+  }
+
+  findAll(): Product[] {
+    return this.products;
+  }
+
+  findOne(id: number): Product {
+    const product = this.products.find((p) => p.id === id);
+    if (!product) {
+      // Use Nest's built-in exceptions, never plain `throw new Error(...)`,
+      // so the client gets a proper 404 instead of a generic 500.
+      throw new NotFoundException(`Product ${id} not found`);
+    }
+    return product;
+  }
+
+  update(id: number, dto: UpdateProductDto): Product {
+    const product = this.findOne(id); // reuse findOne — it already throws if missing
+    Object.assign(product, dto);       // merge only the fields the client sent
+    return product;
+  }
+
+  remove(id: number): void {
+    const index = this.products.findIndex((p) => p.id === id);
+    if (index === -1) {
+      throw new NotFoundException(`Product ${id} not found`);
+    }
+    this.products.splice(index, 1);
+    // void — deleting is an action, not a question, so nothing meaningful to return
+  }
+}
+```
+
+**Things to notice in this Service, in order of importance:**
+1. `create()` explicitly hardcodes `inStock: true` — this is the pattern for any field the server should control instead of the client.
+2. `findOne()` throws `NotFoundException`, not a plain `Error` — this is what turns into a real `404 Bad Request` HTTP response instead of a generic crash.
+3. `update()` reuses `findOne()` rather than duplicating the "find or throw" logic — don't repeat yourself even in a small Service like this.
+4. `remove()` returns `void` because deleting doesn't need to hand back a value — it's an action, not a question.
+5. Every method that "finds" something returns the actual object; every method that "does" something (`create`, `remove`) either returns the new state or nothing at all.
+
+Once a real database is introduced later, only the *inside* of these methods changes (e.g. `this.products.find(...)` becomes a repository `.findOne(...)` call) — the method signatures, the Controller, and the DTOs all stay exactly the same. This is the entire reason for structuring things this way.
+
+---
+
+## Common Mistakes to Avoid
+
+- **A module importing itself** — a module only lists what it directly owns (`controllers`, `providers`). It never puts its own name in its own `imports` array.
+- **Forgetting `ValidationPipe`** — a DTO with decorators does nothing unless `app.useGlobalPipes(new ValidationPipe())` is present in `main.ts` (already done in this template).
+- **Using `throw new Error(...)` instead of `NotFoundException`** — plain errors become generic `500`s. Use Nest's built-in exceptions (`NotFoundException`, `BadRequestException`, etc.) so the client gets a proper HTTP status and message.
+- **Property initializer errors** — if TypeScript complains a property "has no initializer," add `!` after the name (e.g. `id!: number;`), since decorators/DI assign these values at runtime, not at class definition time.
+- **Sending fields the server should control** — don't let the client set fields like `inStock`, `status`, or `createdAt` through the Create DTO; hardcode or auto-generate them in the Service.
+
+---
+
+## Environment Variables
+
+See `.env.example` for the full list of variables this project expects. Copy it to `.env` and fill in real values — `.env` is gitignored and should never be committed.
+
+---
+
+## Project Structure
+
+```
+src/
+├── app.controller.ts     # default root route ("Hello World")
+├── app.service.ts
+├── app.module.ts          # root module — imports every feature module
+├── main.ts                 # bootstrap + global ValidationPipe
+└── <resource>/              # created per-resource via `nest generate resource`
+    ├── dto/
+    │   ├── create-<resource>.dto.ts
+    │   └── update-<resource>.dto.ts
+    ├── entities/
+    │   └── <resource>.entity.ts
+    ├── <resource>.controller.ts
+    ├── <resource>.service.ts
+    └── <resource>.module.ts
+```
