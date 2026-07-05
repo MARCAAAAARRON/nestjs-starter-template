@@ -1,8 +1,39 @@
-# NestJS Starter Template
+<div align="center">
 
-A minimal NestJS starter with global validation enabled, ready to scaffold new resources immediately.
+# 🚀 NestJS Starter Template
 
-## What's Included
+**A minimal, opinionated NestJS starter with global validation baked in — clone it and start building a new resource in minutes.**
+
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](./LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](CONTRIBUTING.md)
+
+![GitHub stars](https://img.shields.io/github/stars/MARCAAAAARRON/nestjs-starter-template?style=social)
+![GitHub forks](https://img.shields.io/github/forks/MARCAAAAARRON/nestjs-starter-template?style=social)
+![GitHub last commit](https://img.shields.io/github/last-commit/MARCAAAAARRON/nestjs-starter-template)
+
+</div>
+
+---
+
+## 📖 Table of Contents
+
+- [What's Included](#-whats-included)
+- [Setup](#-setup)
+- [The Core Pattern](#-the-core-pattern-how-a-request-flows-through-the-app)
+- [Adding a New Resource](#-adding-a-new-resource)
+- [Full Worked Example](#-full-worked-example-entity--service)
+- [Common Mistakes to Avoid](#-common-mistakes-to-avoid)
+- [Environment Variables](#-environment-variables)
+- [Project Structure](#-project-structure)
+- [Contributing](#-contributing)
+- [Contributors](#-contributors)
+- [License](#-license)
+
+---
+
+## ✨ What's Included
 - NestJS base project (Nest CLI default)
 - `class-validator` + `class-transformer` installed and wired up
 - Global `ValidationPipe` enabled in `main.ts`
@@ -11,11 +42,11 @@ A minimal NestJS starter with global validation enabled, ready to scaffold new r
 
 ---
 
-## Setup
+## ⚙️ Setup
 
 1. Clone this repo
    ```bash
-   git clone https://github.com/MARCAAAAARRON/nest-starter-template.git
+   git clone https://github.com/MARCAAAAARRON/nestjs-starter-template.git
    ```
 3. Copy `.env.example` to `.env`
    ```bash
@@ -34,7 +65,7 @@ A minimal NestJS starter with global validation enabled, ready to scaffold new r
 
 ---
 
-## The Core Pattern: How a Request Flows Through the App
+## 🔄 The Core Pattern: How a Request Flows Through the App
 
 Every resource you build in this project follows the same shape. Understanding this flow matters more than memorizing syntax.
 
@@ -104,7 +135,7 @@ AppModule
 
 ---
 
-## Adding a New Resource
+## 🧩 Adding a New Resource
 
 ```bash
 npx nest generate resource <name>
@@ -124,7 +155,7 @@ Some fields (like a `status` or `inStock` flag defaulting to a fixed value) shou
 
 ---
 
-## Full Worked Example: Entity + Service
+## 🛠️ Full Worked Example: Entity + Service
 
 This is a complete, working reference for a `Product` resource — the same shape every future resource in this template will follow. Use this as the template to copy from when building something new, rather than starting from a blank file.
 
@@ -238,7 +269,7 @@ Once a real database is introduced later, only the *inside* of these methods cha
 
 ---
 
-## Common Mistakes to Avoid
+## ⚠️ Common Mistakes to Avoid
 
 - **A module importing itself** — a module only lists what it directly owns (`controllers`, `providers`). It never puts its own name in its own `imports` array.
 - **Forgetting `ValidationPipe`** — a DTO with decorators does nothing unless `app.useGlobalPipes(new ValidationPipe())` is present in `main.ts` (already done in this template).
@@ -248,13 +279,13 @@ Once a real database is introduced later, only the *inside* of these methods cha
 
 ---
 
-## Environment Variables
+## 🔑 Environment Variables
 
 See `.env.example` for the full list of variables this project expects. Copy it to `.env` and fill in real values — `.env` is gitignored and should never be committed.
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 src/
@@ -272,3 +303,52 @@ src/
     ├── <resource>.service.ts
     └── <resource>.module.ts
 ```
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature suggestions are welcome.
+
+1. Fork the repo
+2. Create your feature branch
+   ```bash
+   git checkout -b feature/amazing-addition
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m "Add: amazing addition"
+   ```
+4. Push to the branch
+   ```bash
+   git push origin feature/amazing-addition
+   ```
+5. Open a Pull Request
+
+Please keep additions consistent with the existing pattern (Entity → DTO → Service → Controller → Module) and update the README if you introduce a new convention.
+
+---
+
+## 👥 Contributors
+
+Thanks to everyone who has contributed to this template.
+
+<a href="https://github.com/MARCAAAAARRON/nestjs-starter-template/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=MARCAAAAARRON/nestjs-starter-template" />
+</a>
+
+<sub>Built and maintained by [@MARCAAAAARRON](https://github.com/MARCAAAAARRON). Made with the [contrib.rocks](https://contrib.rocks) contributor graph — it updates automatically as people contribute.</sub>
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details. Free to use, modify, and reuse across any of your future projects.
+
+---
+
+<div align="center">
+
+**If this template saved you setup time, consider giving it a ⭐ on GitHub.**
+
+</div>
