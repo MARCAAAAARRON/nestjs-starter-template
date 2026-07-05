@@ -14,20 +14,23 @@ A minimal NestJS starter with global validation enabled, ready to scaffold new r
 ## Setup
 
 1. Clone this repo
-2. Copy `.env.example` to `.env`
+   ```bash
+   git clone https://github.com/MARCAAAAARRON/nest-starter-template.git
+   ```
+3. Copy `.env.example` to `.env`
    ```bash
    cp .env.example .env
    ```
-3. Fill in real values in `.env`
-4. Install dependencies
+4. Fill in real values in `.env`
+5. Install dependencies
    ```bash
    pnpm install
    ```
-5. Start the dev server
+6. Start the dev server
    ```bash
    npm run start:dev
    ```
-6. Visit `http://localhost:3000` — you should see "Hello World!"
+7. Visit `http://localhost:3000` — you should see "Hello World!"
 
 ---
 
